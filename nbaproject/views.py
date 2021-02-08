@@ -26,18 +26,28 @@ def matches(request):
     return  render(request, "nbaproject/matches.html",{"players":[],"value":0})
 def get_matches(request):
     player = {}
+    cont = 1
     value = int(request.GET.get("inch"))
     pairs = []
     tp = ()
     for i in data["values"]:
         player[i["first_name"]+"_"+i["last_name"]] = i["h_in"]
-
+    mk = [k for k in player.keys()]
     for k,v in player.items():
-        for m,c in player.items():
-            if k !=m:
-                if sum([int(v),int(c)]) == value:
-                    tp = (k,m)
+        cont = 1
+        while cont <= len(player):
+            tp = ()
+            if int(v) + int(player[mk[cont-1]]) == value and k!=mk[cont-1]:
+                if (k,mk[cont-1]) not in pairs and (mk[cont-1],k) not in pairs:
+                    tp = (k,mk[cont-1])
                     pairs.append(tp)
+                    cont += 1 
+            cont += 1
+        # for m,c in player.items():
+        #     if k !=m:
+        #         if sum([int(v),int(c)]) == value:
+        #             tp = (k,m)
+        #             pairs.append(tp)
     if len(pairs) == 0:
         return  render(request, "nbaproject/matches.html",{"players":["NO DATA FOUND"],"value":0})
     else:           
